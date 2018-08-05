@@ -1,0 +1,24 @@
+{
+  "name": "jstrivia",
+  "version": "1.0.0",
+  "description": "Trivia code",
+  "main": "launcher.js",
+  "dependencies": {
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint": "^5.3.0",
+    "eslint-plugin-import": "^2.13.0",
+    "lodash": "^4.17.10",
+    "seedrandom": "^2.4.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "jasmine-node ."
+  },
+  "keywords": [
+    "TDD",
+    "trivia",
+    "refactoring"
+  ],
+  "author": "Oleg Bilka",
+  "license": "ISC"
+}
