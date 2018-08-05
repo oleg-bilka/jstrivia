@@ -13,8 +13,6 @@ const dircompare = require('dir-compare');
 const goldenMasterPath = './golden_master_data';
 const secondaryTestsPath = './secondary_data';
 
-
-
 function launchGameWithOutputRedirect(playersCount, seed, path) {
   const outputFile = `${path}/playersCount_${playersCount}_diceSeed_${seed}.txt`
   let outStream = fs.createWriteStream(outputFile, {'flags': 'a'});
@@ -51,7 +49,7 @@ function generateGoldenMaster(path) {
       setTimeout(done, 500);
    });
 
-   it('should generate initial golden master data if its directory is empty', (done) => {
+   xit('should generate initial golden master data if its directory is empty', (done) => {
      const goldenMasterFolder = fs.readdirSync(goldenMasterPath);
      if (goldenMasterFolder.length < 3) {
        generateGoldenMaster(goldenMasterPath);
