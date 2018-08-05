@@ -4,39 +4,78 @@ const seedrandom = require('seedrandom');
 
 const launcher = './launcher.js';
 
+const empty = require('empty-folder');
+ 
 const spawn = require('child_process').spawn;
 
+const dircompare = require('dir-compare');
+
 const goldenMasterPath = './golden_master_data';
+const secondaryTestsPath = './secondary_data';
 
-function roll(diceSeed) {
-  const pseudoRandomNumber = seedrandom(diceSeed)();
-  return Math.floor(pseudoRandomNumber * 6) + 1;
+
+
+function launchGameWithOutputRedirect(playersCount, seed, path) {
+  const outputFile = `${path}/playersCount_${playersCount}_diceSeed_${seed}.txt`
+  let outStream = fs.createWriteStream(outputFile, {'flags': 'a'});
+  seedrandom(seed, { global: true });
+  let gMaster = require(launcher)
+  gMaster.launchGame(playersCount, outStream);
 }
 
-function launchGameWithOutputRedirect(playersCount, diceSeed) {
-  const outputFile = `${goldenMasterPath}/playersCount_${playersCount}_diceSeed_${diceSeed}.txt`
-  const goldenMaster = fs.createWriteStream(outputFile);
-  const diceRoll = roll(diceSeed);
-  const gMaster = spawn('node', [launcher, playersCount, diceRoll]);
-  gMaster.stdout.pipe(goldenMaster);
-}
-
-function generateGoldenMaster() {
+function generateGoldenMaster(path) {
   const minPlayers = 3;
   const maxPlayers = 5;
   const maxSeed = 20;
   for (let playersCount = minPlayers; playersCount < maxPlayers + 1; playersCount += 1) {
     for (let seed = 1; seed < maxSeed + 1; seed += 1) {
-      launchGameWithOutputRedirect(playersCount, seed);
+      launchGameWithOutputRedirect(playersCount, seed, path);
     }
   }
+  return;
 }
 
-describe('Golden master test', () => {
-  it('should generate golden master data', () => {
-    const goldenMasterFolder = fs.readdirSync(goldenMasterPath);
-    if (goldenMasterFolder.length < 3) {
-      generateGoldenMaster();
-    }
-  });
-});
+ describe('Golden master test', () => {
+   
+    /**This timeout required due to the fact we are redirecting console.log from our game session
+       * to fs stream we do not have a way to ensure that all console logs are finished without modifying game code
+       * however we do not want to do it in GM test. Another way is to spawn node processes for each game session however I don't like this sollution either.
+       * 
+    */
+    beforeAll(function (done) {
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+      done();
+    });
+
+    beforeEach(function(done) {
+      setTimeout(done, 500);
+   });
+
+   it('should generate initial golden master data if its directory is empty', (done) => {
+     const goldenMasterFolder = fs.readdirSync(goldenMasterPath);
+     if (goldenMasterFolder.length < 3) {
+       generateGoldenMaster(goldenMasterPath);
+       done();
+     }
+     done();
+   });
+
+
+    it('Create New test results and compare it with initial Golden Master tests',  (done) => {
+      empty(secondaryTestsPath, false, (o)=>{
+        if(o.error) console.error(err);
+        generateGoldenMaster(secondaryTestsPath);
+        done();
+      });
+    });
+
+    it('Should compare secondary test results folder with the golden master test data',  (done) => {
+      var options = {
+        compareContent: true
+      };
+      var res = dircompare.compareSync(goldenMasterPath, secondaryTestsPath, options);
+      //console.info(res);
+      expect(res.distinct).toBe(0);
+      done();
+    });
+ });

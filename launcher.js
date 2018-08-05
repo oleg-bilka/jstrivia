@@ -1,4 +1,13 @@
-function launchGame(playersCount, diceRoll) {
+
+
+exports.launchGame = (playersCount, outStream) => {
+
+    var cl = console.log
+    console.log = function(...args){
+        outStream.write(args.join(''));
+        //cl.apply(console, args)
+    }
+    
     require('./game.js');
     var notAWinner = false;
     var game = new Game();
@@ -8,14 +17,14 @@ function launchGame(playersCount, diceRoll) {
         game.add(playerName);
     }
     do {
-        game.roll(diceRoll || Math.floor(Math.random() * 6) + 1);
+        game.roll(Math.floor(Math.random() * 6) + 1);
         if (Math.floor(Math.random() * 10) === 7) {
             notAWinner = game.wrongAnswer();
         } else {
             notAWinner = game.wasCorrectlyAnswered();
         }
     } while (notAWinner);
-    process.exit();
+    outStream.end();
+    console.log = cl;
+    return;
 }
-
-launchGame(process.argv[2], process.argv[3]);
