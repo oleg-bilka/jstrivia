@@ -40,10 +40,6 @@ exports.Game = function () {
     return 'Rock';
   };
 
-  this.createRockQuestion = function (index) {
-    return "Rock Question " + index;
-  };
-
   for (var i = 0; i < 50; i++) {
     popQuestions.push("Pop Question " + i);
     scienceQuestions.push("Science Question " + i);
