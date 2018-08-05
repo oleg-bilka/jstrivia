@@ -19,25 +19,30 @@ exports.Game = function () {
   };
 
   var currentCategory = function () {
+    const popCategory = "Pop";
+    const scienceCategory = "Science"; 
+    const sportsCategory = "Sports";
+    const rockCategory = "Rock";
+    
     if (places[currentPlayer] == 0)
-      return 'Pop';
+      return popCategory;
     if (places[currentPlayer] == 4)
-      return 'Pop';
+      return popCategory;
     if (places[currentPlayer] == 8)
-      return 'Pop';
+      return popCategory;
     if (places[currentPlayer] == 1)
-      return 'Science';
+      return scienceCategory;
     if (places[currentPlayer] == 5)
-      return 'Science';
+      return scienceCategory;
     if (places[currentPlayer] == 9)
-      return 'Science';
+      return scienceCategory;
     if (places[currentPlayer] == 2)
-      return 'Sports';
+      return sportsCategory;
     if (places[currentPlayer] == 6)
-      return 'Sports';
+      return sportsCategory;
     if (places[currentPlayer] == 10)
-      return 'Sports';
-    return 'Rock';
+      return sportsCategory;
+    return rockCategory;
   };
 
   for (var i = 0; i < 50; i++) {
