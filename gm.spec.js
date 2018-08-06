@@ -2,7 +2,9 @@ const fs = require('fs');
 
 const seedrandom = require('seedrandom');
 
+
 const launcher = './launcher.js';
+delete require.cache[require.resolve(launcher)];
 
 const empty = require('empty-folder');
  
@@ -12,6 +14,8 @@ const dircompare = require('dir-compare');
 
 const goldenMasterPath = './golden_master_data';
 const secondaryTestsPath = './secondary_data';
+
+
 
 function launchGameWithOutputRedirect(playersCount, seed, path) {
   const outputFile = `${path}/playersCount_${playersCount}_diceSeed_${seed}.txt`
@@ -46,7 +50,7 @@ function generateGoldenMaster(path) {
     });
 
     beforeEach(function(done) {
-      setTimeout(done, 500);
+      setTimeout(done, 900);
    });
 
    xit('should generate initial golden master data if its directory is empty', (done) => {

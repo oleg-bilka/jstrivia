@@ -1,6 +1,10 @@
 
+require('./game.js');
 
 exports.launchGame = (playersCount, outStream) => {
+
+    const maxAnswerId = 10;
+    const wrongAnswerId = 7;
 
     var cl = console.log
     console.log = function(...args){
@@ -8,17 +12,19 @@ exports.launchGame = (playersCount, outStream) => {
         //cl.apply(console, args)
     }
     
-    require('./game.js');
     var notAWinner = false;
     var game = new Game();
+
     // Generate players
     for (let playerNum = 0; playerNum < playersCount; playerNum += 1) {
         var playerName = 'player_' + playerNum;
         game.add(playerName);
     }
     do {
-        game.roll(Math.floor(Math.random() * 6) + 1);
-        if (Math.floor(Math.random() * 10) === 7) {
+        const diceRollResult =  Math.floor(Math.random() * 6) + 1;
+        const answerGiven = Math.floor(Math.random() * maxAnswerId);
+        game.roll(diceRollResult);
+        if (answerGiven=== wrongAnswerId) {
             notAWinner = game.wrongAnswer();
         } else {
             notAWinner = game.wasCorrectlyAnswered();
