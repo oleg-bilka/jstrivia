@@ -165,8 +165,7 @@ exports.Game = function () {
         purses[currentPlayer] += 1;
         console.log(players[currentPlayer] + " now has " +
           purses[currentPlayer] + " Gold Coins.");
-        var winner = didPlayerWin();
-        return winner;
+        return didPlayerWin();;
       } else {
         return true;
       }
@@ -175,8 +174,7 @@ exports.Game = function () {
       purses[currentPlayer] += 1;
       console.log(players[currentPlayer] + " now has " +
         purses[currentPlayer] + " Gold Coins.");
-      var winner = didPlayerWin();
-      return winner;
+      return didPlayerWin();;
     }
   };
 
