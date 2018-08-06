@@ -1,6 +1,9 @@
 exports = typeof window !== "undefined" && window !== null ? window : global;
 
 exports.Game = function () {
+  const questionCategorySize = 50;
+  const coinsToWin = 6;
+
   var players = new Array();
   var places = new Array(6);
   var purses = new Array(6);
@@ -15,7 +18,7 @@ exports.Game = function () {
   var isGettingOutOfPenaltyBox = false;
 
   var didPlayerWin = function () {
-    return !(purses[currentPlayer] == 6)
+    return !(purses[currentPlayer] == coinsToWin)
   };
 
   var currentCategory = function () {
@@ -45,7 +48,9 @@ exports.Game = function () {
     return rockCategory;
   };
 
-  for (var i = 0; i < 50; i++) {
+
+
+  for (var i = 0; i < questionCategorySize; i++) {
     popQuestions.push("Pop Question " + i);
     scienceQuestions.push("Science Question " + i);
     sportsQuestions.push("Sports Question " + i);
@@ -53,7 +58,8 @@ exports.Game = function () {
   };
 
   this.isPlayable = function (howManyPlayers) {
-    return howManyPlayers >= 2;
+    const minimumNumberOfPlayers = 2
+    return howManyPlayers >= minimumNumberOfPlayers;
   };
 
   this.add = function (playerName) {
@@ -85,6 +91,8 @@ exports.Game = function () {
   };
 
   this.roll = function (roll) {
+    const boardSize = 12;
+    const boardLastPosition = boardSize - 1;
     console.log(players[currentPlayer] + " is the current player");
     console.log("They have rolled a " + roll);
 
@@ -94,8 +102,8 @@ exports.Game = function () {
 
         console.log(players[currentPlayer] + " is getting out of the penalty box");
         places[currentPlayer] = places[currentPlayer] + roll;
-        if (places[currentPlayer] > 11) {
-          places[currentPlayer] = places[currentPlayer] - 12;
+        if (places[currentPlayer] > boardLastPosition) {
+          places[currentPlayer] = places[currentPlayer] - boardSize;
         }
 
         console.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
@@ -108,8 +116,8 @@ exports.Game = function () {
     } else {
 
       places[currentPlayer] = places[currentPlayer] + roll;
-      if (places[currentPlayer] > 11) {
-        places[currentPlayer] = places[currentPlayer] - 12;
+      if (places[currentPlayer] > boardLastPosition) {
+        places[currentPlayer] = places[currentPlayer] - boardSize;
       }
 
       console.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
