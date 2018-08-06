@@ -81,6 +81,15 @@ exports.Game = function () {
     return players.length;
   };
 
+  
+  this.movePlayer = (boardSize, rolledNum) =>{
+    const boardLastPosition = boardSize - 1;
+    places[currentPlayer] = places[currentPlayer] + rolledNum;
+    if (playerShouldStartANewLap(boardLastPosition)) {
+      places[currentPlayer] = places[currentPlayer] - boardSize;
+    }
+  }
+
 
   var askQuestion = function () {
     if (currentCategory() == 'Pop')
@@ -93,22 +102,17 @@ exports.Game = function () {
       console.log(rockQuestions.shift());
   };
 
-  this.roll = function (roll) {
+  this.roll = function (rolledNum) {
     const boardSize = 12;
-    const boardLastPosition = boardSize - 1;
     console.log(players[currentPlayer] + " is the current player");
-    console.log("They have rolled a " + roll);
+    console.log("They have rolled a " + rolledNum);
 
     if (inPenaltyBox[currentPlayer]) {
-      if (isOdd(roll)) {
+      if (isOdd(rolledNum)) {
         isGettingOutOfPenaltyBox = true;
 
         console.log(players[currentPlayer] + " is getting out of the penalty box");
-        places[currentPlayer] = places[currentPlayer] + roll;
-        if (playerShouldStartANewLap(boardLastPosition)) {
-          places[currentPlayer] = places[currentPlayer] - boardSize;
-        }
-
+        this.movePlayer(boardSize, rolledNum);
         console.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
         console.log("The category is " + currentCategory());
         askQuestion();
@@ -117,12 +121,8 @@ exports.Game = function () {
         isGettingOutOfPenaltyBox = false;
       }
     } else {
-
-      places[currentPlayer] = places[currentPlayer] + roll;
-      if (playerShouldStartANewLap(boardLastPosition)) {
-        places[currentPlayer] = places[currentPlayer] - boardSize;
-      }
-
+      this.movePlayer(boardSize, rolledNum);
+     
       console.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
       console.log("The category is " + currentCategory());
       askQuestion();
