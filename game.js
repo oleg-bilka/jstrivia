@@ -26,25 +26,19 @@ exports.Game = function () {
     const scienceCategory = "Science"; 
     const sportsCategory = "Sports";
     const rockCategory = "Rock";
-    
-    if (places[currentPlayer] == 0)
-      return popCategory;
-    if (places[currentPlayer] == 4)
-      return popCategory;
-    if (places[currentPlayer] == 8)
-      return popCategory;
-    if (places[currentPlayer] == 1)
-      return scienceCategory;
-    if (places[currentPlayer] == 5)
-      return scienceCategory;
-    if (places[currentPlayer] == 9)
-      return scienceCategory;
-    if (places[currentPlayer] == 2)
-      return sportsCategory;
-    if (places[currentPlayer] == 6)
-      return sportsCategory;
-    if (places[currentPlayer] == 10)
-      return sportsCategory;
+
+    var categoriesMap = new Map([
+      [0, popCategory],
+      [1, scienceCategory],
+      [2, sportsCategory],
+      [4, popCategory],
+      [5, scienceCategory],
+      [6, sportsCategory],
+      [9, scienceCategory],
+      [10, sportsCategory]
+    ])
+    if (categoriesMap.has(places[currentPlayer]))
+      return categoriesMap.get(places[currentPlayer]);
     return rockCategory;
   };
 
@@ -95,7 +89,19 @@ exports.Game = function () {
   }
 
   this.logPlayerCurrentCategory= () => {
-    console.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
+    console.log("The category is " + currentCategory());
+  }
+
+  this.logCurrentPlayer = () => {
+    console.log(players[currentPlayer] + " is the current player");
+  }
+
+  this.logRolledNum = (rolledNum) =>{
+    console.log("They have rolled a " + rolledNum);
+  }
+
+  this.logIfPlayerGettingOutOfPenaltyBox = (isGettingOutOfPenaltyBox) =>{
+    console.log(`${players[currentPlayer]} is ${isGettingOutOfPenaltyBox ? '': 'not '}getting out of the penalty box`);
   }
 
 
@@ -111,21 +117,21 @@ exports.Game = function () {
   };
 
   this.roll = function (rolledNum) {
-    const boardSize = 12;
-    console.log(players[currentPlayer] + " is the current player");
-    console.log("They have rolled a " + rolledNum);
+    this.logCurrentPlayer();
+    this.logRolledNum(rolledNum);
 
+    const boardSize = 12;
     if (inPenaltyBox[currentPlayer]) {
       if (isOdd(rolledNum)) {
         isGettingOutOfPenaltyBox = true;
-        console.log(players[currentPlayer] + " is getting out of the penalty box");
+        this.logIfPlayerGettingOutOfPenaltyBox(isGettingOutOfPenaltyBox);
         this.movePlayer(boardSize, rolledNum);
         this.logPlayerNewLocation();
         this.logPlayerCurrentCategory();
         askQuestion();
       } else {
-        console.log(players[currentPlayer] + " is not getting out of the penalty box");
         isGettingOutOfPenaltyBox = false;
+        this.logIfPlayerGettingOutOfPenaltyBox(isGettingOutOfPenaltyBox);
       }
     } else {
       this.movePlayer(boardSize, rolledNum);
