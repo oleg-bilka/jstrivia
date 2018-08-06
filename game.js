@@ -148,6 +148,16 @@ exports.Game = function () {
     }
   };
 
+  const PlayerIsEligableForGold = ()=>{
+   return  !inPenaltyBox[currentPlayer] || inPenaltyBox[currentPlayer] && isGettingOutOfPenaltyBox
+  }
+
+  const GainGoldForCorrectAnswer = () => {
+    purses[currentPlayer] += 1;
+    console.log('Answer was correct!!!!');
+    console.log(players[currentPlayer] + " now has " + purses[currentPlayer] + " Gold Coins.");
+  }
+
   this.selectNextPlayerAfterAnswerDecorator = function (answerFunc){
     let self =  this;
     return function (){
@@ -156,26 +166,14 @@ exports.Game = function () {
       return value;
     }
   }
-
+  
   //This function is exposed with selectNextPlayerAfterAnswerDecorator
   const wasCorrectlyAnswered = function () {
-    if (inPenaltyBox[currentPlayer]) {
-      if (isGettingOutOfPenaltyBox) {
-        console.log('Answer was correct!!!!');
-        purses[currentPlayer] += 1;
-        console.log(players[currentPlayer] + " now has " +
-          purses[currentPlayer] + " Gold Coins.");
-        return didPlayerWin();;
-      } else {
-        return true;
-      }
-    } else {
-      console.log("Answer was correct!!!!");
-      purses[currentPlayer] += 1;
-      console.log(players[currentPlayer] + " now has " +
-        purses[currentPlayer] + " Gold Coins.");
-      return didPlayerWin();;
+    if (PlayerIsEligableForGold()) {
+        GainGoldForCorrectAnswer();
+        return didPlayerWin();
     }
+    return true
   };
 
   //This function is exposed with selectNextPlayerAfterAnswerDecorator
