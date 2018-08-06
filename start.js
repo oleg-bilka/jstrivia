@@ -1,0 +1,1 @@
+require('./launcher.js').startGame();
