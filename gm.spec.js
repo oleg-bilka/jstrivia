@@ -21,14 +21,16 @@ function launchGameWithOutputRedirect(playersCount, seed, path) {
 }
 
 async function generateGoldenMaster(path) {
+  let gamePromise = [];
   const minPlayers = 3;
   const maxPlayers = 5;
   const maxSeed = 20;
   for (let playersCount = minPlayers; playersCount < maxPlayers + 1; playersCount += 1) {
     for (let seed = 1; seed < maxSeed + 1; seed += 1) {
-      (await launchGameWithOutputRedirect(playersCount, seed, path));
+      gamePromise.push(launchGameWithOutputRedirect(playersCount, seed, path));
     }
   }
+  return Promise.all(gamePromise);
 }
 
 describe('Golden master test', () => {
@@ -50,8 +52,7 @@ describe('Golden master test', () => {
   xit('should generate initial golden master data if its directory is empty', (done) => {
     const goldenMasterFolder = fs.readdirSync(goldenMasterPath);
     if (goldenMasterFolder.length < 3) {
-      generateGoldenMaster(goldenMasterPath);
-      done();
+      generateGoldenMaster(goldenMasterPath).then(done);
     }
     done();
   });
@@ -60,8 +61,7 @@ describe('Golden master test', () => {
   it('Create New test results and compare it with initial Golden Master tests', (done) => {
     empty(secondaryTestsPath, false, (o) => {
       if (o.error) console.error(o.error);
-      generateGoldenMaster(secondaryTestsPath);
-      done();
+      generateGoldenMaster(secondaryTestsPath).then(done);
     });
   });
 
