@@ -4,24 +4,29 @@ exports.Game = function () {
   const questionCategorySize = 50;
   const coinsToWin = 6;
 
-  var players = [];
-  var places = [];
-  var purses = [];;
-  var inPenaltyBox = [];
+  const players = [];
+  const places = [];
+  const purses = [];;
+  const inPenaltyBox = [];
 
-  var popQuestions = [];
-  var scienceQuestions =[];
-  var sportsQuestions = [];
-  var rockQuestions = [];
+  const popQuestions = [];
+  const scienceQuestions =[];
+  const sportsQuestions = [];
+  const rockQuestions = [];
 
-  var currentPlayer = 0;
-  var isGettingOutOfPenaltyBox = false;
+  let currentPlayer = 0;
+  let isGettingOutOfPenaltyBox = false;
 
-  var didPlayerWin = function () {
-    return !(purses[currentPlayer] == coinsToWin)
+  //* Populate question topics */
+  for (var i = 0; i < questionCategorySize; i+=1) {
+    popQuestions.push("Pop Question " + i);
+    scienceQuestions.push("Science Question " + i);
+    sportsQuestions.push("Sports Question " + i);
+    rockQuestions.push("Rock Question " + i);
   };
 
-  var currentCategory = function () {
+  //* Private Methods */
+  const currentCategory =  () => {
     const popCategory = "Pop";
     const scienceCategory = "Science"; 
     const sportsCategory = "Sports";
@@ -37,10 +42,13 @@ exports.Game = function () {
       [9, scienceCategory],
       [10, sportsCategory]
     ])
-
     if (categoriesMap.has(places[currentPlayer]))
       return categoriesMap.get(places[currentPlayer]);
     return rockCategory;
+  };
+
+  const didPlayerWin = function () {
+    return !(purses[currentPlayer] == coinsToWin)
   };
 
   const isOdd = num => num % 2 != 0;
@@ -48,13 +56,7 @@ exports.Game = function () {
   const needToResetCurrentPlayer = () => currentPlayer == players.length
 
 
-  for (var i = 0; i < questionCategorySize; i++) {
-    popQuestions.push("Pop Question " + i);
-    scienceQuestions.push("Science Question " + i);
-    sportsQuestions.push("Sports Question " + i);
-    rockQuestions.push("Rock Question " + i);
-  };
-
+  //* Public Methods */
   this.isPlayable = function (howManyPlayers) {
     const minimumNumberOfPlayers = 2
     return howManyPlayers >= minimumNumberOfPlayers;
@@ -65,10 +67,8 @@ exports.Game = function () {
     places[this.howManyPlayers() - 1] = 0;
     purses[this.howManyPlayers() - 1] = 0;
     inPenaltyBox[this.howManyPlayers() - 1] = false;
-
     console.log(playerName + " was added");
     console.log("They are player number " + players.length);
-
     return true;
   };
 
@@ -83,6 +83,12 @@ exports.Game = function () {
     if (playerShouldStartANewLap(boardLastPosition)) {
       places[currentPlayer] = places[currentPlayer] - boardSize;
     }
+  }
+
+  this.selectNextPlayer = ()=>{
+    currentPlayer += 1;
+    if (needToResetCurrentPlayer())
+      currentPlayer = 0;
   }
 
   this.logPlayerNewLocation = () => {
@@ -142,6 +148,8 @@ exports.Game = function () {
     }
   };
 
+
+
   this.wasCorrectlyAnswered = function () {
     if (inPenaltyBox[currentPlayer]) {
       if (isGettingOutOfPenaltyBox) {
@@ -149,12 +157,8 @@ exports.Game = function () {
         purses[currentPlayer] += 1;
         console.log(players[currentPlayer] + " now has " +
           purses[currentPlayer] + " Gold Coins.");
-
         var winner = didPlayerWin();
-        currentPlayer += 1;
-        if (needToResetCurrentPlayer())
-          currentPlayer = 0;
-
+        this.selectNextPlayer();
         return winner;
       } else {
         currentPlayer += 1;
@@ -162,21 +166,14 @@ exports.Game = function () {
           currentPlayer = 0;
         return true;
       }
-
     } else {
-
       console.log("Answer was correct!!!!");
-
       purses[currentPlayer] += 1;
       console.log(players[currentPlayer] + " now has " +
         purses[currentPlayer] + " Gold Coins.");
-
       var winner = didPlayerWin();
 
-      currentPlayer += 1;
-      if (needToResetCurrentPlayer())
-        currentPlayer = 0;
-
+      this.selectNextPlayer();
       return winner;
     }
   };
@@ -185,10 +182,7 @@ exports.Game = function () {
     console.log('Question was incorrectly answered');
     console.log(players[currentPlayer] + " was sent to the penalty box");
     inPenaltyBox[currentPlayer] = true;
-
-    currentPlayer += 1;
-    if (currentPlayer == players.length)
-      currentPlayer = 0;
+    this.selectNextPlayer();
     return true;
   };
 };
