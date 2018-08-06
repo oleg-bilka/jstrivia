@@ -85,7 +85,7 @@ exports.Game = function () {
     }
   }
 
-  this.selectNextPlayer = ()=>{
+  this.selectNextPlayer = () => {
     currentPlayer += 1;
     if (needToResetCurrentPlayer())
       currentPlayer = 0;
@@ -148,9 +148,17 @@ exports.Game = function () {
     }
   };
 
+  this.selectNextPlayerAfterAnswerDecorator = function (answerFunc){
+    let self =  this;
+    return function (){
+      value = answerFunc();
+      self.selectNextPlayer();
+      return value;
+    }
+  }
 
-
-  this.wasCorrectlyAnswered = function () {
+  //This function is exposed with selectNextPlayerAfterAnswerDecorator
+  const wasCorrectlyAnswered = function () {
     if (inPenaltyBox[currentPlayer]) {
       if (isGettingOutOfPenaltyBox) {
         console.log('Answer was correct!!!!');
@@ -158,12 +166,8 @@ exports.Game = function () {
         console.log(players[currentPlayer] + " now has " +
           purses[currentPlayer] + " Gold Coins.");
         var winner = didPlayerWin();
-        this.selectNextPlayer();
         return winner;
       } else {
-        currentPlayer += 1;
-        if (needToResetCurrentPlayer())
-          currentPlayer = 0;
         return true;
       }
     } else {
@@ -172,18 +176,20 @@ exports.Game = function () {
       console.log(players[currentPlayer] + " now has " +
         purses[currentPlayer] + " Gold Coins.");
       var winner = didPlayerWin();
-
-      this.selectNextPlayer();
       return winner;
     }
   };
 
-  this.wrongAnswer = function () {
+  //This function is exposed with selectNextPlayerAfterAnswerDecorator
+  const wrongAnswer = function () {
     console.log('Question was incorrectly answered');
     console.log(players[currentPlayer] + " was sent to the penalty box");
     inPenaltyBox[currentPlayer] = true;
-    this.selectNextPlayer();
     return true;
   };
+
+  this.wasCorrectlyAnswered = this.selectNextPlayerAfterAnswerDecorator(wasCorrectlyAnswered);
+  this.wrongAnswer = this.selectNextPlayerAfterAnswerDecorator(wrongAnswer);
+
 };
 
