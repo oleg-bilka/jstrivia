@@ -1,5 +1,6 @@
 
 require('./game.js');
+const helper = require('./helper.js');
 
 exports.launchGame = (playersCount, outStream = null) => {
   const cl = console.log;
@@ -18,8 +19,9 @@ exports.launchGame = (playersCount, outStream = null) => {
   };
 
   const tearDownConsoleRedirect = () => {
-    outStream.end();
     console.log = cl;
+    outStream.end();
+    return helper.streamPromise(outStream);
   };
 
   // Helper functiom for Golden Master Test
@@ -43,7 +45,7 @@ exports.launchGame = (playersCount, outStream = null) => {
     const diceRollResult = Math.floor(Math.random() * 6) + 1;
     game.roll(diceRollResult);
   } while (hasSomebodyWon(game, isCorrectlyAnswered));
-  if (outStream) tearDownConsoleRedirect();
+  if (outStream) return tearDownConsoleRedirect();
 };
 
 exports.startGame = () => {
