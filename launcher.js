@@ -14,8 +14,15 @@ exports.launchGame = (playersCount, outStream) => {
         outStream.write(args.join(''));
         //cl.apply(console, args)
     }
+
+    const hasSomebodyWon = (game, winCriterion) =>{
+        if (winCriterion())  {
+            return game.wasCorrectlyAnswered();
+       } else {
+           return game.wrongAnswer();
+       }
+    }
     
-    var notAWinner = false;
     var game = new Game();
 
     // Generate players
@@ -26,12 +33,8 @@ exports.launchGame = (playersCount, outStream) => {
     do {
         const diceRollResult =  Math.floor(Math.random() * 6) + 1;
         game.roll(diceRollResult);
-        if (isCorrectlyAnswered()) {
-            notAWinner = game.wasCorrectlyAnswered();
-        } else {
-            notAWinner = game.wrongAnswer();
-        }
-    } while (notAWinner);
+      
+    } while (hasSomebodyWon(game, isCorrectlyAnswered));
     outStream.end();
     console.log = cl;
     return;

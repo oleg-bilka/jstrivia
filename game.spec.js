@@ -81,4 +81,21 @@ describe('Game logic', function () {
         game.roll(dice);
         expect(console.log.calls.allArgs()).toEqual(expectedOutput);
     });
+
+    xit('Should be able to roll the dice', function () {
+        var game = new Game();
+        const playerPlace = 2;
+        const rolledNumber = 1;
+
+        $rolledNumber = 1;
+        var game = new Game();
+        
+
+        game.add('Martin');
+        game.add('Helen');
+        game.roll(dice);
+        expect(console.log.calls.allArgs()).toEqual(expectedOutput);
+    });
+
+
 });
