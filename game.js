@@ -26,7 +26,6 @@ exports.Game = function () {
     const scienceCategory = "Science"; 
     const sportsCategory = "Sports";
     const rockCategory = "Rock";
-
     var categoriesMap = new Map([
       [0, popCategory],
       [1, scienceCategory],
@@ -34,9 +33,11 @@ exports.Game = function () {
       [4, popCategory],
       [5, scienceCategory],
       [6, sportsCategory],
+      [8, popCategory],
       [9, scienceCategory],
       [10, sportsCategory]
     ])
+    
     if (categoriesMap.has(places[currentPlayer]))
       return categoriesMap.get(places[currentPlayer]);
     return rockCategory;
