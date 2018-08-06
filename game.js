@@ -48,6 +48,9 @@ exports.Game = function () {
     return rockCategory;
   };
 
+  const isOdd = num => num % 2 != 0;
+  const playerShouldStartANewLap = boardLastPosition => places[currentPlayer] > boardLastPosition;
+  const needToResetCurrentPlayer = () => currentPlayer == players.length
 
 
   for (var i = 0; i < questionCategorySize; i++) {
@@ -97,12 +100,12 @@ exports.Game = function () {
     console.log("They have rolled a " + roll);
 
     if (inPenaltyBox[currentPlayer]) {
-      if (roll % 2 != 0) {
+      if (isOdd(roll)) {
         isGettingOutOfPenaltyBox = true;
 
         console.log(players[currentPlayer] + " is getting out of the penalty box");
         places[currentPlayer] = places[currentPlayer] + roll;
-        if (places[currentPlayer] > boardLastPosition) {
+        if (playerShouldStartANewLap(boardLastPosition)) {
           places[currentPlayer] = places[currentPlayer] - boardSize;
         }
 
@@ -116,7 +119,7 @@ exports.Game = function () {
     } else {
 
       places[currentPlayer] = places[currentPlayer] + roll;
-      if (places[currentPlayer] > boardLastPosition) {
+      if (playerShouldStartANewLap(boardLastPosition)) {
         places[currentPlayer] = places[currentPlayer] - boardSize;
       }
 
@@ -136,13 +139,13 @@ exports.Game = function () {
 
         var winner = didPlayerWin();
         currentPlayer += 1;
-        if (currentPlayer == players.length)
+        if (needToResetCurrentPlayer())
           currentPlayer = 0;
 
         return winner;
       } else {
         currentPlayer += 1;
-        if (currentPlayer == players.length)
+        if (needToResetCurrentPlayer())
           currentPlayer = 0;
         return true;
       }
@@ -158,7 +161,7 @@ exports.Game = function () {
       var winner = didPlayerWin();
 
       currentPlayer += 1;
-      if (currentPlayer == players.length)
+      if (needToResetCurrentPlayer())
         currentPlayer = 0;
 
       return winner;

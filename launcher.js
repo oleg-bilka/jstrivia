@@ -6,7 +6,7 @@ exports.launchGame = (playersCount, outStream) => {
     const isCorrectlyAnswered = () => {
         const maxAnswerId = 10;
         const wrongAnswerId = 7;
-        Math.floor(Math.random() * maxAnswerId) !== wrongAnswerId;
+        return Math.floor(Math.random() * maxAnswerId) !== wrongAnswerId;
     } 
 
     var cl = console.log
