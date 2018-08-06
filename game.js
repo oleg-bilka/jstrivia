@@ -4,15 +4,15 @@ exports.Game = function () {
   const questionCategorySize = 50;
   const coinsToWin = 6;
 
-  var players = new Array();
-  var places = new Array(6);
-  var purses = new Array(6);
-  var inPenaltyBox = new Array(6);
+  var players = [];
+  var places = [];
+  var purses = [];;
+  var inPenaltyBox = [];
 
-  var popQuestions = new Array();
-  var scienceQuestions = new Array();
-  var sportsQuestions = new Array();
-  var rockQuestions = new Array();
+  var popQuestions = [];
+  var scienceQuestions =[];
+  var sportsQuestions = [];
+  var rockQuestions = [];
 
   var currentPlayer = 0;
   var isGettingOutOfPenaltyBox = false;
@@ -37,7 +37,7 @@ exports.Game = function () {
       [9, scienceCategory],
       [10, sportsCategory]
     ])
-    
+
     if (categoriesMap.has(places[currentPlayer]))
       return categoriesMap.get(places[currentPlayer]);
     return rockCategory;
