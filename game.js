@@ -1,4 +1,6 @@
-exports = typeof window !== "undefined" && window !== null ? window : global;
+
+/*eslint func-names: ["error", "never"]*/ 
+exports = typeof window !== 'undefined' && window !== null ? window : global;
 
 exports.Game = function () {
   const questionCategorySize = 50;
@@ -6,32 +8,32 @@ exports.Game = function () {
 
   const players = [];
   const places = [];
-  const purses = [];;
+  const purses = [];
   const inPenaltyBox = [];
 
-  let category = {
-    "Pop": [],
-    "Science": [],
-    "Sports": [],
-    "Rock": []
-  }
+  const category = {
+    Pop: [],
+    Science: [],
+    Sports: [],
+    Rock: [],
+  };
 
   let currentPlayer = 0;
   let isGettingOutOfPenaltyBox = false;
 
   //* Populate question topics */
-  for (let i = 0; i < questionCategorySize; i+=1) {
-    Object.keys(category).map(topic=>{
-      category[topic].push(`${topic} Question ` + i);
-    })
-  };
+  for (let i = 0; i < questionCategorySize; i += 1) {
+    Object.keys(category).map((topic) => {
+      category[topic].push(`${topic} Question ${i}`);
+    });
+  }
 
   //* Private Methods */
-  const currentCategory =  () => {
-    const popCategory = "Pop";
-    const scienceCategory = "Science"; 
-    const sportsCategory = "Sports";
-    const rockCategory = "Rock";
+  const currentCategory = () => {
+    const popCategory = 'Pop';
+    const scienceCategory = 'Science';
+    const sportsCategory = 'Sports';
+    const rockCategory = 'Rock';
     const categoriesMap = new Map([
       [0, popCategory],
       [1, scienceCategory],
@@ -41,25 +43,32 @@ exports.Game = function () {
       [6, sportsCategory],
       [8, popCategory],
       [9, scienceCategory],
-      [10, sportsCategory]
-    ])
-    if (categoriesMap.has(places[currentPlayer]))
+      [10, sportsCategory],
+    ]);
+    if (categoriesMap.has(places[currentPlayer])) {
       return categoriesMap.get(places[currentPlayer]);
+    }
     return rockCategory;
   };
 
   const didPlayerWin = function () {
-    return !(purses[currentPlayer] == coinsToWin)
+    return !(purses[currentPlayer] === coinsToWin);
   };
 
-  const isOdd = num => num % 2 != 0;
+  const isOdd = num => num % 2 !== 0;
+  const needToResetCurrentPlayer = () => currentPlayer === players.length;
   const playerShouldStartANewLap = boardLastPosition => places[currentPlayer] > boardLastPosition;
-  const needToResetCurrentPlayer = () => currentPlayer == players.length
+  const playerIsEligableForGold = () => !inPenaltyBox[currentPlayer]
+                                       || (inPenaltyBox[currentPlayer] && isGettingOutOfPenaltyBox);
 
+  const askQuestion = function () {
+    const question = category[currentCategory()].shift();
+    console.log(question);
+  };
 
   //* Public Methods */
   this.isPlayable = function (howManyPlayers) {
-    const minimumNumberOfPlayers = 2
+    const minimumNumberOfPlayers = 2;
     return howManyPlayers >= minimumNumberOfPlayers;
   };
 
@@ -68,8 +77,8 @@ exports.Game = function () {
     places[this.howManyPlayers() - 1] = 0;
     purses[this.howManyPlayers() - 1] = 0;
     inPenaltyBox[this.howManyPlayers() - 1] = false;
-    console.log(playerName + " was added");
-    console.log("They are player number " + players.length);
+    console.log(`${playerName} was added`);
+    console.log(`They are player number ${players.length}`);
     return true;
   };
 
@@ -77,45 +86,39 @@ exports.Game = function () {
     return players.length;
   };
 
-  
-  this.movePlayer = (boardSize, rolledNum) =>{
+  this.movePlayer = (boardSize, rolledNum) => {
     const boardLastPosition = boardSize - 1;
-    places[currentPlayer] = places[currentPlayer] + rolledNum;
+    places[currentPlayer] += rolledNum;
     if (playerShouldStartANewLap(boardLastPosition)) {
-      places[currentPlayer] = places[currentPlayer] - boardSize;
+      places[currentPlayer] -= boardSize;
     }
-  }
+  };
 
   this.selectNextPlayer = () => {
     currentPlayer += 1;
-    if (needToResetCurrentPlayer())
+    if (needToResetCurrentPlayer()) {
       currentPlayer = 0;
-  }
+    }
+  };
 
   this.logPlayerNewLocation = () => {
-    console.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
-  }
+    console.log(`${players[currentPlayer]}'s new location is ${places[currentPlayer]}`);
+  };
 
-  this.logPlayerCurrentCategory= () => {
-    console.log("The category is " + currentCategory());
-  }
+  this.logPlayerCurrentCategory = () => {
+    console.log(`The category is ${currentCategory()}`);
+  };
 
   this.logCurrentPlayer = () => {
-    console.log(players[currentPlayer] + " is the current player");
-  }
+    console.log(`${players[currentPlayer]} is the current player`);
+  };
 
-  this.logRolledNum = (rolledNum) =>{
-    console.log("They have rolled a " + rolledNum);
-  }
+  this.logRolledNum = (rolledNum) => {
+    console.log(`They have rolled a ${rolledNum}`);
+  };
 
-  this.logIfPlayerGettingOutOfPenaltyBox = (isGettingOutOfPenaltyBox) =>{
-    console.log(`${players[currentPlayer]} is ${isGettingOutOfPenaltyBox ? '': 'not '}getting out of the penalty box`);
-  }
-
-
-  var askQuestion = function () {  
-     const question = category[currentCategory()].shift();
-     console.log(question)
+  this.logIfPlayerGettingOutOfPenaltyBox = (isGettingOut) => {
+    console.log(`${players[currentPlayer]} is ${isGettingOut ? '' : 'not '}getting out of the penalty box`);  
   };
 
   this.roll = function (rolledNum) {
@@ -143,45 +146,38 @@ exports.Game = function () {
     }
   };
 
-  const glayerIsEligableForGold = ()=>{
-   return  !inPenaltyBox[currentPlayer] || inPenaltyBox[currentPlayer] && isGettingOutOfPenaltyBox
-  }
-
   const gainGoldForCorrectAnswer = () => {
     purses[currentPlayer] += 1;
     console.log('Answer was correct!!!!');
-    console.log(players[currentPlayer] + " now has " + purses[currentPlayer] + " Gold Coins.");
-  }
-
- 
-  this.selectNextPlayerAfterAnswerDecorator = function (answerFunc){
-    let self =  this;
-    return function (){
-      value = answerFunc();
-      self.selectNextPlayer();
-      return value;
-    }
-  }
-  
-  //This function is exposed with selectNextPlayerAfterAnswerDecorator
-  const wasCorrectlyAnswered = function () {
-    if (glayerIsEligableForGold()) {
-        gainGoldForCorrectAnswer();
-        return didPlayerWin();
-    }
-    return true 
+    console.log(`${players[currentPlayer]} now has ${purses[currentPlayer]} Gold Coins.`);
   };
 
-  //This function is exposed with selectNextPlayerAfterAnswerDecorator
+  this.selectNextPlayerAfterAnswerDecorator = function (answerFunc) {
+    const self = this;
+    return function () {
+      const value = answerFunc();
+      self.selectNextPlayer();
+      return value;
+    };
+  };
+
+  // This function is exposed with selectNextPlayerAfterAnswerDecorator
+  const wasCorrectlyAnswered = function () {
+    if (playerIsEligableForGold()) {
+      gainGoldForCorrectAnswer();
+      return didPlayerWin();
+    }
+    return true;
+  };
+
+  // This function is exposed with selectNextPlayerAfterAnswerDecorator
   const wrongAnswer = function () {
     console.log('Question was incorrectly answered');
-    console.log(players[currentPlayer] + " was sent to the penalty box");
+    console.log(`${players[currentPlayer]} was sent to the penalty box`);
     inPenaltyBox[currentPlayer] = true;
     return true;
   };
 
   this.wasCorrectlyAnswered = this.selectNextPlayerAfterAnswerDecorator(wasCorrectlyAnswered);
   this.wrongAnswer = this.selectNextPlayerAfterAnswerDecorator(wrongAnswer);
-
 };
-
