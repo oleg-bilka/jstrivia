@@ -1,12 +1,12 @@
 Test with node.js
 =====================
 
-Install the jasmine-node plugin from https://github.com/mhevery/jasmine-node
+Install npx runner:
 
-	npm install jasmine-node -g
+	npm install npx -g
 
 And execute:
 
-	jasmine-node .
+	npm test
 
 Any test source matching the pattern *.spec.js will be executed.

@@ -1,20 +1,33 @@
 
 require('./game.js');
 
-exports.launchGame = (playersCount, outStream) => {
-
+exports.launchGame = (playersCount, outStream = null) => {
+  const cl = console.log;
+ 
   const isCorrectlyAnswered = () => {
     const maxAnswerId = 10;
     const wrongAnswerId = 7;
     return Math.floor(Math.random() * maxAnswerId) !== wrongAnswerId;
   };
 
-  const cl = console.log;
-  console.log = (...args) => {
-    outStream.write(args.join(''));
+  // Helper function for Golden Master Test
+  const setupConsoleRedirect = () => {
+    console.log = (...args) => {
+      outStream.write(args.join(''));
+    };
   };
 
-  const hasSomebodyWon = (game, winCriterion) =>{
+  const tearDownConsoleRedirect = () => {
+    outStream.end();
+    console.log = cl;
+  };
+
+  // Helper functiom for Golden Master Test
+  if (outStream) {
+    setupConsoleRedirect();
+  }
+
+  const hasSomebodyWon = (game, winCriterion) => {
     if (winCriterion()) {
       return game.wasCorrectlyAnswered();
     }
@@ -30,6 +43,9 @@ exports.launchGame = (playersCount, outStream) => {
     const diceRollResult = Math.floor(Math.random() * 6) + 1;
     game.roll(diceRollResult);
   } while (hasSomebodyWon(game, isCorrectlyAnswered));
-  outStream.end();
-  console.log = cl;
+  if (outStream) tearDownConsoleRedirect();
+};
+
+exports.startGame = () => {
+  this.launchGame(5);
 };
