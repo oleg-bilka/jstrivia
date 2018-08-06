@@ -9,20 +9,21 @@ exports.Game = function () {
   const purses = [];;
   const inPenaltyBox = [];
 
-  const popQuestions = [];
-  const scienceQuestions =[];
-  const sportsQuestions = [];
-  const rockQuestions = [];
+  let category = {
+    "Pop": [],
+    "Science": [],
+    "Sports": [],
+    "Rock": []
+  }
 
   let currentPlayer = 0;
   let isGettingOutOfPenaltyBox = false;
 
   //* Populate question topics */
-  for (var i = 0; i < questionCategorySize; i+=1) {
-    popQuestions.push("Pop Question " + i);
-    scienceQuestions.push("Science Question " + i);
-    sportsQuestions.push("Sports Question " + i);
-    rockQuestions.push("Rock Question " + i);
+  for (let i = 0; i < questionCategorySize; i+=1) {
+    Object.keys(category).map(topic=>{
+      category[topic].push(`${topic} Question ` + i);
+    })
   };
 
   //* Private Methods */
@@ -31,7 +32,7 @@ exports.Game = function () {
     const scienceCategory = "Science"; 
     const sportsCategory = "Sports";
     const rockCategory = "Rock";
-    var categoriesMap = new Map([
+    const categoriesMap = new Map([
       [0, popCategory],
       [1, scienceCategory],
       [2, sportsCategory],
@@ -112,15 +113,9 @@ exports.Game = function () {
   }
 
 
-  var askQuestion = function () {
-    if (currentCategory() == 'Pop')
-      console.log(popQuestions.shift());
-    if (currentCategory() == 'Science')
-      console.log(scienceQuestions.shift());
-    if (currentCategory() == 'Sports')
-      console.log(sportsQuestions.shift());
-    if (currentCategory() == 'Rock')
-      console.log(rockQuestions.shift());
+  var askQuestion = function () {  
+     const question = category[currentCategory()].shift();
+     console.log(question)
   };
 
   this.roll = function (rolledNum) {
@@ -148,16 +143,17 @@ exports.Game = function () {
     }
   };
 
-  const PlayerIsEligableForGold = ()=>{
+  const glayerIsEligableForGold = ()=>{
    return  !inPenaltyBox[currentPlayer] || inPenaltyBox[currentPlayer] && isGettingOutOfPenaltyBox
   }
 
-  const GainGoldForCorrectAnswer = () => {
+  const gainGoldForCorrectAnswer = () => {
     purses[currentPlayer] += 1;
     console.log('Answer was correct!!!!');
     console.log(players[currentPlayer] + " now has " + purses[currentPlayer] + " Gold Coins.");
   }
 
+ 
   this.selectNextPlayerAfterAnswerDecorator = function (answerFunc){
     let self =  this;
     return function (){
@@ -169,11 +165,11 @@ exports.Game = function () {
   
   //This function is exposed with selectNextPlayerAfterAnswerDecorator
   const wasCorrectlyAnswered = function () {
-    if (PlayerIsEligableForGold()) {
-        GainGoldForCorrectAnswer();
+    if (glayerIsEligableForGold()) {
+        gainGoldForCorrectAnswer();
         return didPlayerWin();
     }
-    return true
+    return true 
   };
 
   //This function is exposed with selectNextPlayerAfterAnswerDecorator
