@@ -90,6 +90,14 @@ exports.Game = function () {
     }
   }
 
+  this.logPlayerNewLocation = () => {
+    console.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
+  }
+
+  this.logPlayerCurrentCategory= () => {
+    console.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
+  }
+
 
   var askQuestion = function () {
     if (currentCategory() == 'Pop')
@@ -110,11 +118,10 @@ exports.Game = function () {
     if (inPenaltyBox[currentPlayer]) {
       if (isOdd(rolledNum)) {
         isGettingOutOfPenaltyBox = true;
-
         console.log(players[currentPlayer] + " is getting out of the penalty box");
         this.movePlayer(boardSize, rolledNum);
-        console.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
-        console.log("The category is " + currentCategory());
+        this.logPlayerNewLocation();
+        this.logPlayerCurrentCategory();
         askQuestion();
       } else {
         console.log(players[currentPlayer] + " is not getting out of the penalty box");
@@ -122,9 +129,8 @@ exports.Game = function () {
       }
     } else {
       this.movePlayer(boardSize, rolledNum);
-     
-      console.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
-      console.log("The category is " + currentCategory());
+      this.logPlayerNewLocation();
+      this.logPlayerCurrentCategory();
       askQuestion();
     }
   };
