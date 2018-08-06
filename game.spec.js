@@ -86,8 +86,6 @@ describe('Game logic', () => {
     const game = new Game();
     const playerPlace = 2;
     const rolledNumber = 1;
-    $rolledNumber = 1;
-    const game = new Game();
     game.add('Martin');
     game.add('Helen');
     game.roll(dice);
