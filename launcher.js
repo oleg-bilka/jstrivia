@@ -3,8 +3,11 @@ require('./game.js');
 
 exports.launchGame = (playersCount, outStream) => {
 
-    const maxAnswerId = 10;
-    const wrongAnswerId = 7;
+    const isCorrectlyAnswered = () => {
+        const maxAnswerId = 10;
+        const wrongAnswerId = 7;
+        Math.floor(Math.random() * maxAnswerId) !== wrongAnswerId;
+    } 
 
     var cl = console.log
     console.log = function(...args){
@@ -22,12 +25,11 @@ exports.launchGame = (playersCount, outStream) => {
     }
     do {
         const diceRollResult =  Math.floor(Math.random() * 6) + 1;
-        const answerGiven = Math.floor(Math.random() * maxAnswerId);
         game.roll(diceRollResult);
-        if (answerGiven=== wrongAnswerId) {
-            notAWinner = game.wrongAnswer();
-        } else {
+        if (isCorrectlyAnswered()) {
             notAWinner = game.wasCorrectlyAnswered();
+        } else {
+            notAWinner = game.wrongAnswer();
         }
     } while (notAWinner);
     outStream.end();
